@@ -14,7 +14,8 @@ var express = require('express'),
     path = require('path'),
     prismic = require('express-prismic').Prismic,
     configuration = require('./prismic-configuration').Configuration,
-    blog = require('./blog');
+    blog = require('./blog'),
+    pages = require('./pages');
 var app = express();
 
 app.locals.general = require('./includes/general');
@@ -55,6 +56,9 @@ app.route('/').get(blog.bloghome);
 app.route('/blog').get(blog.bloghome);
 
 app.route('/blog/:uid').get(blog.post);
+
+app.route('/:uid').get(pages.page);
+
 
 app.route('/preview').get(prismic.preview);
 
