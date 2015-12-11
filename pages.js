@@ -1,5 +1,21 @@
 var prismic = require('express-prismic').Prismic;
 
+
+function toCamelcase(name) {
+  return name.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase()})
+};
+
+
+function buildMixinName(sliceType, sliceLabel) {
+  var fs = require('fs');
+      path = require('path'),
+      labeledFileExists = fs.existsSync(path.resolve('views/slices/' + sliceType + '-' + sliceLabel + '.jade')),
+      mixinWithLabel = toCamelcase(sliceType + '-' + sliceLabel),
+      mixinName = (labeledFileExists ? mixinWithLabel : toCamelcase(sliceType));
+  return mixinName;
+
+}
+
 exports.page = function(req, res) {
   var uid = req.params['uid']
 
@@ -15,7 +31,10 @@ exports.page = function(req, res) {
     }
     else if (page.uid == uid) {
       res.render('page', {
-        page: page
+        page: page,
+        helpers: {
+          buildMixinName:buildMixinName
+        }
       })
     } else res.redirect(("/" + page.uid))
   });
